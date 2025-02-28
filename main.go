@@ -27,7 +27,9 @@ func encode(s any) string {
 func main() {
 	speech := htgotts.Speech{Folder: ".", Language: voices.Russian, Handler: &handlers.Native{}}
 	ggcrID := os.Getenv("GGCR_ID")
-	fmt.Println(ggcrID)
+	if ggcrID == "" {
+		panic(errors.New("cannot get your GGCR_ID from env..."))
+	}
 
 	conn, _, err := websocket.DefaultDialer.Dial(
 		"wss://chat-1.goodgame.ru/chat2/", nil)

@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"os/exec"
 	"strings"
 	"time"
 
@@ -27,6 +26,8 @@ func encode(s any) string {
 
 func main() {
 	speech := htgotts.Speech{Folder: ".", Language: voices.Russian, Handler: &handlers.Native{}}
+	ggcrID := os.Getenv("GGCR_ID")
+	fmt.Println(ggcrID)
 
 	conn, _, err := websocket.DefaultDialer.Dial(
 		"wss://chat-1.goodgame.ru/chat2/", nil)
@@ -43,11 +44,6 @@ func main() {
 	}
 	fmt.Println("Goodgame: welcome!")
 
-	defer func() {
-		cmd := exec.Command("rm", "*.mp3")
-		cmd.Run()
-	}()
-
 	for {
 		lmid, err := os.ReadFile("lmid.txt")
 		if err != nil {
@@ -63,7 +59,7 @@ func main() {
 			}{"get_channel_history", struct {
 				ChannelID string `json:"channel_id"`
 				From      string `json:"from"`
-			}{"214528", string(lmid)}})
+			}{ggcrID, string(lmid)}})
 		var msg Msg
 		conn.ReadJSON(&msg)
 		switch msg.Type {

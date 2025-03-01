@@ -19,6 +19,14 @@ type Msg struct {
 	Data json.RawMessage `json:"data"`
 }
 
+type GetChHistoryMsg struct {
+	Type string `json:"type"`
+	Data struct {
+		ChannelID string `json:"channel_id"`
+		From      string `json:"from"`
+	} `json:"data"`
+}
+
 func encode(s any) string {
 	res, _ := json.Marshal(s)
 	return string(res)
@@ -51,17 +59,11 @@ func main() {
 		if err != nil {
 			lmid = []byte("0")
 		}
-		conn.WriteJSON(
-			struct {
-				Type string `json:"type"`
-				Data struct {
-					ChannelID string `json:"channel_id"`
-					From      string `json:"from"`
-				} `json:"data"`
-			}{"get_channel_history", struct {
-				ChannelID string `json:"channel_id"`
-				From      string `json:"from"`
-			}{ggcrID, string(lmid)}})
+		conn.WriteJSON(GetChHistoryMsg{"get_channel_history", struct {
+			ChannelID string `json:"channel_id"`
+			From      string `json:"from"`
+		}{ggcrID, string(lmid)}})
+
 		var msg Msg
 		conn.ReadJSON(&msg)
 		switch msg.Type {
@@ -94,7 +96,8 @@ func main() {
 			for _, m := range sj.Data.Messages[1:] {
 				t := fmt.Sprintf("%s: %s", m.UserName, m.Text)
 				fmt.Println(t)
-				f, err := speech.CreateSpeechFile(t, fmt.Sprintf("%d", m.MessageID))
+				fName := fmt.Sprintf("%d", m.MessageID)
+				f, err := speech.CreateSpeechFile(t, fName)
 				if err != nil {
 					panic(err)
 				}
@@ -102,6 +105,7 @@ func main() {
 				if err != nil {
 					panic(err)
 				}
+				os.Remove(fName + ".mp3")
 			}
 			lm := sj.Data.Messages[len(sj.Data.Messages)-1]
 			err = os.WriteFile("lmid.txt", []byte(fmt.Sprintf("%d", lm.MessageID)), 0777)

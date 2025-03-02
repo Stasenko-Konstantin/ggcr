@@ -27,11 +27,6 @@ type GetChHistoryMsg struct {
 	} `json:"data"`
 }
 
-func encode(s any) string {
-	res, _ := json.Marshal(s)
-	return string(res)
-}
-
 func main() {
 	speech := htgotts.Speech{Folder: ".", Language: voices.Russian, Handler: &handlers.Native{}}
 	ggcrID := os.Getenv("GGCR_ID")

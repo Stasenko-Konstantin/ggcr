@@ -91,7 +91,7 @@ func main() {
 			}
 			for _, m := range sj.Data.Messages[1:] {
 				t := fmt.Sprintf("%s: %s", m.UserName, m.Text)
-				fmt.Printf(t)
+				fmt.Println(t)
 				fName := fmt.Sprintf("%d", m.MessageID)
 				f, err := speech.CreateSpeechFile(t, fName)
 				if err != nil {

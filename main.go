@@ -108,6 +108,6 @@ func main() {
 				panic(err)
 			}
 		}
-		time.Sleep(time.Second * 60)
+		time.Sleep(time.Second * 10)
 	}
 }

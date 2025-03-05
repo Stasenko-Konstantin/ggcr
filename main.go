@@ -83,14 +83,15 @@ func main() {
 			json.Unmarshal(msg.Data, &sj.Data)
 			for i := len(sj.Data.Messages) - 1; i > 0; i-- {
 				m := sj.Data.Messages[i]
-				if strings.Contains(string(lmid), fmt.Sprintf("%d", m.MessageID)) {
+				if strings.Contains(string(lmid), fmt.Sprintf("%d", m.MessageID)) ||
+					i < len(sj.Data.Messages)-10 {
 					sj.Data.Messages = sj.Data.Messages[i:]
 					break
 				}
 			}
 			for _, m := range sj.Data.Messages[1:] {
 				t := fmt.Sprintf("%s: %s", m.UserName, m.Text)
-				fmt.Println(t)
+				fmt.Printf(t)
 				fName := fmt.Sprintf("%d", m.MessageID)
 				f, err := speech.CreateSpeechFile(t, fName)
 				if err != nil {

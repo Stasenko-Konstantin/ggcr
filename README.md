@@ -24,5 +24,5 @@ if you set everything up correctly, you'll see something like this:
 
     Goodgame: welcome!
 
-and then it starts reading your chat history from the beginning.
-it loads new messages every minute.
+and then it starts reading your chat history from last 10 msgs.
+it loads new messages every 10 sec.

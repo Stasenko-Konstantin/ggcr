@@ -79,7 +79,7 @@ func main() {
 				} `json:"data"`
 			}
 			json.Unmarshal(msg.Data, &err.Data)
-			fmt.Println("error: ", err.Data.ErrorMsg)
+			fmt.Fprintln(os.Stderr, "error: ", err.Data.ErrorMsg)
 		case "channel_history":
 			var sj struct {
 				Data struct {

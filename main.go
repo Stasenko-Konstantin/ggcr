@@ -38,7 +38,8 @@ func main() {
 		os.Exit(0)
 	}()
 
-	speech := htgotts.Speech{Folder: ".", Language: voices.Russian, Handler: &handlers.Native{}}
+	speechRus := htgotts.Speech{Folder: ".", Language: voices.Russian, Handler: &handlers.Native{}}
+	speechEng := htgotts.Speech{Folder: ".", Language: voices.English, Handler: &handlers.Native{}}
 	ggcrID := os.Getenv("GGCR_ID")
 	if ggcrID == "" {
 		panic(errors.New("cannot get your GGCR_ID from env..."))
@@ -103,16 +104,12 @@ func main() {
 				t := fmt.Sprintf("%s: %s", m.UserName, m.Text)
 				fmt.Println(t)
 				notify.Notify("ggcr", "New message!", t, "")
-				fName := fmt.Sprintf("%d", m.MessageID)
-				f, err := speech.CreateSpeechFile(t, fName)
-				if err != nil {
+				if err := speak(speechEng, "eng", m.UserName, m.MessageID); err != nil {
 					panic(err)
 				}
-				err = speech.PlaySpeechFile(f)
-				if err != nil {
+				if err := speak(speechRus, "rus", m.Text, m.MessageID); err != nil {
 					panic(err)
 				}
-				os.Remove(fName + ".mp3")
 			}
 			lm := sj.Data.Messages[len(sj.Data.Messages)-1]
 			err = os.WriteFile("lmid.txt", []byte(fmt.Sprintf("%d", lm.MessageID)), 0777)
@@ -122,4 +119,18 @@ func main() {
 		}
 		time.Sleep(time.Second * 10)
 	}
+}
+
+func speak(speech htgotts.Speech, name, text string, mId int) error {
+	fName := fmt.Sprintf("%d_%s", mId, name)
+	f, err := speech.CreateSpeechFile(text, fName)
+	if err != nil {
+		panic(err)
+	}
+	err = speech.PlaySpeechFile(f)
+	if err != nil {
+		return err
+	}
+	os.Remove(fName + ".mp3")
+	return nil
 }

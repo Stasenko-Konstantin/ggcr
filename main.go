@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"os/signal"
 	"strings"
 	"time"
 
@@ -28,6 +29,14 @@ type GetChHistoryMsg struct {
 }
 
 func main() {
+	sigCh := make(chan os.Signal)
+	signal.Notify(sigCh, os.Interrupt)
+	go func() {
+		<-sigCh
+		fmt.Println("\nGoodGame: goodbye!")
+		os.Exit(0)
+	}()
+
 	speech := htgotts.Speech{Folder: ".", Language: voices.Russian, Handler: &handlers.Native{}}
 	ggcrID := os.Getenv("GGCR_ID")
 	if ggcrID == "" {

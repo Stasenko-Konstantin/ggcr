@@ -13,6 +13,7 @@ import (
 	htgotts "github.com/hegedustibor/htgo-tts"
 	"github.com/hegedustibor/htgo-tts/handlers"
 	"github.com/hegedustibor/htgo-tts/voices"
+	"github.com/martinlindhe/notify"
 )
 
 type Msg struct {
@@ -101,6 +102,7 @@ func main() {
 			for _, m := range sj.Data.Messages[1:] {
 				t := fmt.Sprintf("%s: %s", m.UserName, m.Text)
 				fmt.Println(t)
+				notify.Notify("ggcr", "New message!", t, "")
 				fName := fmt.Sprintf("%d", m.MessageID)
 				f, err := speech.CreateSpeechFile(t, fName)
 				if err != nil {

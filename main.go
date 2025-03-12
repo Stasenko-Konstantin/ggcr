@@ -104,12 +104,8 @@ func main() {
 				t := fmt.Sprintf("%s: %s", m.UserName, m.Text)
 				fmt.Println(t)
 				notify.Notify("ggcr", "New message!", t, "")
-				if err := speak(speechEng, "eng", m.UserName, m.MessageID); err != nil {
-					panic(err)
-				}
-				if err := speak(speechRus, "rus", m.Text, m.MessageID); err != nil {
-					panic(err)
-				}
+				speechEng.Speak(m.UserName)
+				speechRus.Speak(m.Text)
 			}
 			lm := sj.Data.Messages[len(sj.Data.Messages)-1]
 			err = os.WriteFile("lmid.txt", []byte(fmt.Sprintf("%d", lm.MessageID)), 0777)
@@ -119,18 +115,4 @@ func main() {
 		}
 		time.Sleep(time.Second * 10)
 	}
-}
-
-func speak(speech htgotts.Speech, name, text string, mId int) error {
-	fName := fmt.Sprintf("%d_%s", mId, name)
-	f, err := speech.CreateSpeechFile(text, fName)
-	if err != nil {
-		panic(err)
-	}
-	err = speech.PlaySpeechFile(f)
-	if err != nil {
-		return err
-	}
-	os.Remove(fName + ".mp3")
-	return nil
 }

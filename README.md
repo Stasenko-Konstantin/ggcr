@@ -5,7 +5,7 @@ a simple cli application for reading messages in the Goodgame chat
 ### installation (for linux)
 
     git clone https://github.com/Stasenko-Konstantin/ggcr 
-    cd ggcr && ./build.sh
+    cd ggcr && ./install.sh
 
 ### usage
 
